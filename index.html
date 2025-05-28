@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 24px;
+      max-width: 600px;
+      margin: auto;
+      font-size: 1.2rem;
+      background-color: #f9f9f9;
+    }
+    label { margin-top: 20px; display: block; font-weight: bold; }
+    input[type="text"], input[type="file"] {
+      width: 100%; padding: 10px; font-size: 1rem; margin-top: 6px;
+    }
+    button {
+      margin-top: 30px; padding: 12px; width: 100%;
+      font-size: 1.2rem; background-color: #1976d2;
+      color: white; border: none; border-radius: 8px;
+    }
+    #status { margin-top: 20px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>🚒 Fleet Vehicle Upload</h2>
+  <form id="uploadForm">
+    <label>Your Name:</label>
+    <input type="text" id="name" required>
+    <label>Vehicle ID:</label>
+    <input type="text" id="vehicleID" required>
+    <label>Front Photo:</label>
+    <input type="file" id="front" required>
+    <label>Driver Side:</label>
+    <input type="file" id="driver" required>
+    <label>Passenger Side:</label>
+    <input type="file" id="passenger" required>
+    <label>Rear Photo:</label>
+    <input type="file" id="rear" required>
+    <button type="submit">📤 Upload Files</button>
+  </form>
+  <div id="status"></div>
+
+  <script>
+    const endpoint = window.location.href;
+
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      status.innerText = "⏳ Uploading...";
+
+      const formData = new FormData();
+      formData.append("name", document.getElementById("name").value.trim());
+      formData.append("vehicleID", document.getElementById("vehicleID").value.trim());
+      formData.append("front", document.getElementById("front").files[0]);
+      formData.append("driver", document.getElementById("driver").files[0]);
+      formData.append("passenger", document.getElementById("passenger").files[0]);
+      formData.append("rear", document.getElementById("rear").files[0]);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: formData
+        });
+        const text = await response.text();
+        status.innerText = text;
+      } catch (err) {
+        console.error(err);
+        status.innerText = "❌ Upload failed. Check your connection.";
+      }
+    });
+  </script>
+</body>
+</html>
